@@ -4,7 +4,7 @@ const progressText = document.querySelector("#progressText");
 const errorSummary = document.querySelector("#errorSummary");
 const successPanel = document.querySelector("#successPanel");
 const likedHint = document.querySelector("#likedHint");
-const recipientEmail = "agenstar8@gmail.com";
+const endpoint = "https://script.google.com/macros/s/AKfycbwMY6RCKWEY22OymFGcWK2aT2qhYMk9P7QLVeAmPbJ86iM85BunuW8K0ZGm1WBjZXU/exec";
 
 const trackedFields = [
   { type: "select", selector: "[name='age']" },
@@ -102,22 +102,6 @@ function validateForm() {
   return true;
 }
 
-function buildMailBody(payload) {
-  return [
-    "アンケート回答が届きました。",
-    "",
-    `お名前: ${payload.name || "未入力"}`,
-    `メールアドレス: ${payload.email || "未入力"}`,
-    `年代: ${payload.age}`,
-    `利用頻度: ${payload.frequency}`,
-    `総合満足度: ${payload.satisfaction}`,
-    `特によかった点: ${payload.liked.length > 0 ? payload.liked.join("、") : "未選択"}`,
-    `改善してほしい点: ${payload.improvement}`,
-    `ご意見・ご要望: ${payload.comment || "未入力"}`,
-    `同意チェック: ${payload.consent ? "はい" : "いいえ"}`
-  ].join("\n");
-}
-
 form.addEventListener("input", updateProgress);
 form.addEventListener("change", updateProgress);
 
@@ -129,7 +113,7 @@ form.addEventListener("reset", () => {
   }, 0);
 });
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!validateForm()) {
@@ -149,15 +133,31 @@ form.addEventListener("submit", (event) => {
     consent: formData.get("consent") === "on"
   };
 
-  const subject = encodeURIComponent("アンケート回答");
-  const body = encodeURIComponent(buildMailBody(payload));
-  const mailtoUrl = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(payload)
+    });
 
-  window.location.href = mailtoUrl;
-  successPanel.hidden = false;
-  errorSummary.hidden = true;
-  form.reset();
-  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    const result = await response.json();
+
+    if (!response.ok || !result.ok) {
+      throw new Error(result.error || "送信に失敗しました。");
+    }
+
+    successPanel.hidden = false;
+    errorSummary.hidden = true;
+    form.reset();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  } catch (error) {
+    successPanel.hidden = true;
+    errorSummary.hidden = false;
+    errorSummary.textContent = "送信に失敗しました。しばらくしてから再度お試しください。";
+    console.error("Survey submission failed:", error);
+  }
 });
 
 updateProgress();
