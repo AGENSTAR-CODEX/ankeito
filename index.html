@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>満足度アンケート</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero-card">
+      <p class="eyebrow">Customer Voice Survey</p>
+      <h1>3分で終わるご利用アンケート</h1>
+      <p class="lead">
+        サービス改善のため、率直な感想をお聞かせください。
+        必須項目は5つだけで、送信前に入力漏れもチェックできます。
+      </p>
+
+      <div class="hero-meta">
+        <div>
+          <span class="meta-label">対象</span>
+          <strong>既存ユーザー</strong>
+        </div>
+        <div>
+          <span class="meta-label">所要時間</span>
+          <strong>約3分</strong>
+        </div>
+        <div>
+          <span class="meta-label">回答形式</span>
+          <strong>匿名可</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-header">
+        <div>
+          <p class="section-kicker">Survey Form</p>
+          <h2>アンケート回答</h2>
+        </div>
+        <div class="progress-block" aria-label="入力進捗">
+          <div class="progress-label">
+            <span>入力進捗</span>
+            <strong id="progressText">0%</strong>
+          </div>
+          <div class="progress-bar" aria-hidden="true">
+            <span id="progressBar"></span>
+          </div>
+        </div>
+      </div>
+
+      <form id="surveyForm" novalidate>
+        <div class="form-grid">
+          <label class="field">
+            <span>お名前</span>
+            <input type="text" name="name" placeholder="例: 山田 花子">
+          </label>
+
+          <label class="field">
+            <span>メールアドレス</span>
+            <input type="email" name="email" placeholder="example@email.com">
+          </label>
+
+          <label class="field">
+            <span>年代 <em>*</em></span>
+            <select name="age" required>
+              <option value="">選択してください</option>
+              <option value="10代">10代</option>
+              <option value="20代">20代</option>
+              <option value="30代">30代</option>
+              <option value="40代">40代</option>
+              <option value="50代">50代</option>
+              <option value="60代以上">60代以上</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>利用頻度 <em>*</em></span>
+            <select name="frequency" required>
+              <option value="">選択してください</option>
+              <option value="毎日">毎日</option>
+              <option value="週に数回">週に数回</option>
+              <option value="月に数回">月に数回</option>
+              <option value="初めて使った">初めて使った</option>
+            </select>
+          </label>
+        </div>
+
+        <fieldset class="field-group">
+          <legend>総合満足度 <em>*</em></legend>
+          <div class="rating-row" role="radiogroup" aria-label="総合満足度">
+            <label><input type="radio" name="satisfaction" value="1" required><span>1</span></label>
+            <label><input type="radio" name="satisfaction" value="2"><span>2</span></label>
+            <label><input type="radio" name="satisfaction" value="3"><span>3</span></label>
+            <label><input type="radio" name="satisfaction" value="4"><span>4</span></label>
+            <label><input type="radio" name="satisfaction" value="5"><span>5</span></label>
+          </div>
+          <p class="hint">1が低評価、5が高評価です。</p>
+        </fieldset>
+
+        <fieldset class="field-group">
+          <legend>特によかった点 <em>*</em></legend>
+          <div class="choice-grid">
+            <label><input type="checkbox" name="liked" value="使いやすさ"><span>使いやすさ</span></label>
+            <label><input type="checkbox" name="liked" value="デザイン"><span>デザイン</span></label>
+            <label><input type="checkbox" name="liked" value="機能の豊富さ"><span>機能の豊富さ</span></label>
+            <label><input type="checkbox" name="liked" value="価格"><span>価格</span></label>
+            <label><input type="checkbox" name="liked" value="サポート"><span>サポート</span></label>
+            <label><input type="checkbox" name="liked" value="速度"><span>速度</span></label>
+          </div>
+          <p class="hint" id="likedHint">1つ以上選択してください。</p>
+        </fieldset>
+
+        <label class="field field-full">
+          <span>改善してほしい点 <em>*</em></span>
+          <textarea name="improvement" rows="5" placeholder="例: スマホで操作しやすくしてほしい" required></textarea>
+        </label>
+
+        <label class="field field-full">
+          <span>ご意見・ご要望</span>
+          <textarea name="comment" rows="4" placeholder="任意で自由にご記入ください"></textarea>
+        </label>
+
+        <label class="consent-row">
+          <input type="checkbox" name="consent" required>
+          <span>回答内容がサービス改善に利用されることに同意します。<em>*</em></span>
+        </label>
+
+        <p class="error-summary" id="errorSummary" role="alert" hidden></p>
+
+        <div class="button-row">
+          <button type="reset" class="button ghost">リセット</button>
+          <button type="submit" class="button primary">送信する</button>
+        </div>
+
+        <p class="hint">
+          送信すると、回答内容入りのメール作成画面が開きます。
+        </p>
+      </form>
+
+      <section class="success-panel" id="successPanel" hidden>
+        <p class="section-kicker">Completed</p>
+        <h3>ご回答ありがとうございました</h3>
+        <p>
+          送信内容を受け付けました。いただいたフィードバックは、今後の改善に役立てます。
+        </p>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
